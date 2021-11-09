@@ -14,12 +14,18 @@ import java.time.Duration;
 public class AutomationPracticeSearch {
   WebDriver driver;
   String alertMessage;
+  String expectedProductName;
+  WebElement expectedProduct;
+  WebElement expectedShirtProduct;
+
+  act.mo
 
 
   @BeforeEach
   public void driverSetup (){
     WebDriverManager.chromedriver().setup();
     driver = new ChromeDriver();
+    Actions act=new Actions(driver);
     driver.manage().window().setSize(new Dimension(1295, 738));
     driver.manage().window().setPosition(new Point(5, 30));
     driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
@@ -44,45 +50,76 @@ public class AutomationPracticeSearch {
   }
 
   private int getNumberOfRecords () {
-    return driver.findElements(By.xpath(".//*[starts-with(@class, 'ajax_block_product ')]")).size();
+    return driver.findElements(By.cssSelector("ul[id='product_list'] img")).size();
+  }
+
+  private String getExpectedProductName() {
+    return driver.findElement(By.cssSelector("h5 a[title = 'Printed Chiffon Dress']")).getText();
+  }
+
+  private WebElement getExpectedProduct() {
+    return driver.findElement(By.cssSelector("h5 a[title = 'Printed Chiffon Dress']"));
+  }
+
+  private WebElement getExpectedShirtProduct() {
+    return driver.findElement(By.cssSelector("h5 a[title='Faded Short Sleeves T-shirt']"));
   }
 
 
 
+  @Test
+  public void navigateToCategory () {
+    Actions action = new Actions(driver);
+    WebElement we = driver.findElement(By.xpath(".//*[@id='block_top_menu']/ul/li/a"));
+    WebElement item = driver.findElement(By.cssSelector("[class = 'sfHoverForce'] a[title = 'Summer Dresses']"));
+    action.moveToElement(item).moveToElement(we).click().build().perform();
+  }
 
-  // Search onput tests
+
+  // Search input tests
   @Test
   public void searchFirstWord() {
     searchByInput("Printed");
 
-    Assertions.assertTrue(driver.findElement(By.cssSelector("a[class = 'product_img_link'] [title='Printed Chiffon Dress']")).isDisplayed());
+    expectedProduct = getExpectedProduct();
+
+    Assertions.assertTrue((expectedProduct).isDisplayed());
   }
 
   @Test
   public void searchFieldMiddleWord() {
     searchByInput("Chiffon");
 
-    Assertions.assertTrue(driver.findElement(By.cssSelector("a[class = 'product_img_link'] [title='Printed Chiffon Dress']")).isDisplayed());
+    expectedProduct = getExpectedProduct();
+
+    Assertions.assertTrue((expectedProduct).isDisplayed());
   }
 
   @Test
   public void searchShirtProduct() {
     searchByInput("Faded");
 
-    Assertions.assertFalse(driver.findElement(By.cssSelector("a[class = 'product_img_link'] [title='Printed Chiffon Dress']")).isDisplayed());
+    expectedShirtProduct = getExpectedShirtProduct();
+
+    Assertions.assertTrue((expectedShirtProduct).isDisplayed());
   }
 
   @Test
   public void searchCapitalLetterProduct() {
     searchByInput("CHIFFON");
 
-    Assertions.assertTrue(driver.findElement(By.cssSelector("a[class = 'product_img_link'] [title='Printed Chiffon Dress']")).isDisplayed());
+    expectedProduct = getExpectedProduct();
+
+    Assertions.assertTrue((expectedProduct).isDisplayed());
   }
+
   @Test
   public void searchLowerLettersProduct() {
     searchByInput("chiffon");
 
-    Assertions.assertTrue(driver.findElement(By.cssSelector("a[class = 'product_img_link'] [title='Printed Chiffon Dress']")).isDisplayed());
+    expectedProduct = getExpectedProduct();
+
+    Assertions.assertTrue((expectedProduct).isDisplayed());
   }
 
   @Test
@@ -94,7 +131,7 @@ public class AutomationPracticeSearch {
   }
 
   @Test
-  public void searchFEmptyRecord() {
+  public void searchEmptyRecord() {
     searchByInput("");
     alertMessage = getAlertMessage();
 
@@ -115,9 +152,19 @@ public class AutomationPracticeSearch {
   public void searchCategory() {
     driver.navigate().to("http://automationpractice.multiformis.com/index.php?id_category=11&controller=category");
 
+    expectedProductName = getExpectedProductName();
 
-    Assertions.assertFalse(driver.findElement(By.cssSelector("h5 a[title='Faded Short Sleeves T-shirt']")).isDisplayed());
-    Assertions.assertTrue(driver.findElement(By.cssSelector("h5 a[title = 'Printed Chiffon Dress']")).isDisplayed());
+    Assertions.assertEquals("Printed Chiffon Dress", expectedProductName, "Product is not found");
 
+  }
+
+  @Test
+  public void searchByCriteria() {
+    driver.navigate().to("http://automationpractice.multiformis.com/index.php?id_category=8&controller=category");
+    driver.findElement(By.cssSelector("[title= 'Short dress, long dress, silk dress, printed dress, you will find the perfect dress for summer.']")).click();
+
+    expectedProductName = getExpectedProductName();
+
+    Assertions.assertEquals("Printed Chiffon Dress", expectedProductName, "Product is not found");
   }
 }

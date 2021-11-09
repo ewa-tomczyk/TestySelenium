@@ -18,7 +18,6 @@ public class AutomationPracticeSearch {
   WebElement expectedProduct;
   WebElement expectedShirtProduct;
 
-  act.mo
 
 
   @BeforeEach

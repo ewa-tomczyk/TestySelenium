@@ -11,12 +11,11 @@ import org.openqa.selenium.interactions.Actions;
 
 import java.time.Duration;
 
-public class AutomationPracticeSearch {
-  WebDriver driver;
-  String alertMessage;
-  String expectedProductName;
-  WebElement expectedProduct;
-  WebElement expectedShirtProduct;
+public class AutomationPracticeSearchByCategory {
+  public WebDriver driver;
+  public String expectedProductName;
+  public WebElement expectedProduct;
+  public WebElement expectedShirtProduct;
 
 
 
@@ -25,11 +24,14 @@ public class AutomationPracticeSearch {
     WebDriverManager.chromedriver().setup();
     driver = new ChromeDriver();
     Actions act=new Actions(driver);
-    driver.manage().window().setSize(new Dimension(1295, 738));
-    driver.manage().window().setPosition(new Point(5, 30));
+    driver.manage().window().maximize();
     driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(15));
     driver.navigate().to("http://automationpractice.multiformis.com/index.php");
+
+    WebElement ele = driver.findElement(By.xpath(".//a[text()= 'Women']a"));
+    WebElement we =driver.findElement(By.xpath(".//*[text()= 'Women']/following-sibling::ul/li/following-sibling::li/ul/li[3]/a"));
+    act.moveToElement(ele).moveToElement(we).click().build().perform();
   }
 
   @AfterEach
@@ -45,7 +47,6 @@ public class AutomationPracticeSearch {
 
   private String getAlertMessage () {
     return driver.findElement(By.cssSelector("[class = 'alert alert-warning']")).getText();
-
   }
 
   private int getNumberOfRecords () {
@@ -64,15 +65,6 @@ public class AutomationPracticeSearch {
     return driver.findElement(By.cssSelector("h5 a[title='Faded Short Sleeves T-shirt']"));
   }
 
-
-
-  @Test
-  public void navigateToCategory () {
-    Actions action = new Actions(driver);
-    WebElement we = driver.findElement(By.xpath(".//*[@id='block_top_menu']/ul/li/a"));
-    WebElement item = driver.findElement(By.cssSelector("[class = 'sfHoverForce'] a[title = 'Summer Dresses']"));
-    action.moveToElement(item).moveToElement(we).click().build().perform();
-  }
 
 
   // Search input tests
@@ -123,6 +115,7 @@ public class AutomationPracticeSearch {
 
   @Test
   public void searchIncorrectRecord() {
+    String alertMessage;
     searchByInput("chiffron");
     alertMessage = getAlertMessage();
 
@@ -131,6 +124,7 @@ public class AutomationPracticeSearch {
 
   @Test
   public void searchEmptyRecord() {
+    String alertMessage;
     searchByInput("");
     alertMessage = getAlertMessage();
 

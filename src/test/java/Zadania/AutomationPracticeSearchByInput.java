@@ -41,11 +41,11 @@ public class AutomationPracticeSearchByInput {
   }
 
   private WebElement getExpectedProduct() {
-    return driver.findElement(By.cssSelector("h5 a[title = 'Printed Chiffon Dress']"));
+    return driver.findElement(By.cssSelector("[id= 'product_list'] h5 a[title = 'Printed Chiffon Dress']"));
   }
 
   private WebElement getExpectedShirtProduct() {
-    return driver.findElement(By.cssSelector("h5 a[title='Faded Short Sleeves T-shirt']"));
+    return driver.findElement(By.cssSelector(" [id= 'product_list'] h5 a[title='Faded Short Sleeves T-shirt']"));
   }
 
   @Test

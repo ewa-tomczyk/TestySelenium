@@ -8,12 +8,15 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
 public class AutomationPracticeSearchByCategory {
-  public WebDriver driver;
-  public String expectedProductName;
+  WebDriver driver;
+  WebDriverWait wait;
+  public WebElement expectedProduct;
+  public WebElement unExpectedProduct;
 
   @BeforeEach
   public void driverSetup (){
@@ -27,6 +30,8 @@ public class AutomationPracticeSearchByCategory {
     WebElement ele = driver.findElement(By.xpath(".//a[text()= 'Women']"));
     WebElement we =driver.findElement(By.xpath(".//*[text()= 'Women']/following-sibling::ul/li/following-sibling::li/ul/li[3]/a"));
     act.moveToElement(ele).moveToElement(we).click().build().perform();
+
+    wait = new WebDriverWait(driver, Duration.ofSeconds(10));
   }
 
   @AfterEach
@@ -35,22 +40,31 @@ public class AutomationPracticeSearchByCategory {
     driver.quit();
   }
 
-  private String getExpectedProductName() {
-    return driver.findElement(By.cssSelector("h5 a[title = 'Printed Chiffon Dress']")).getText();
+  private WebElement getExpectedProduct() {
+    return driver.findElement(By.cssSelector("[id= 'product_list'] h5 a[title = 'Printed Chiffon Dress']"));
+  }
+
+  private WebElement getUnExpectedProduct() {
+    return driver.findElement(By.cssSelector("[id= 'product_list'] h5 a[title = 'Printed Summer Dress']"));
   }
 
   @Test
-  public void searchCategory() {
+  public void searchOnCategoryPage() {
 
-    expectedProductName = getExpectedProductName();
-    Assertions.assertEquals("Printed Chiffon Dress", expectedProductName, "Product is not found");
+    expectedProduct = getExpectedProduct();
+    Assertions.assertTrue((expectedProduct).isDisplayed(), "Product is not found");
   }
 
   @Test
-  public void searchByCriteria() {
-    driver.findElement(By.cssSelector("[title= 'Short dress, long dress, silk dress, printed dress, you will find the perfect dress for summer.']")).click();
-    expectedProductName = getExpectedProductName();
+  public void searchByFilters() {
+    driver.findElement(By.xpath(".//a[text()= 'S']")).click();
+    driver.findElement(By.xpath(".//a[text()= 'Green']")).click();
+    driver.findElement(By.xpath(".//a[text()= 'Midi Dress']")).click();
+    driver.findElement(By.xpath(".//a[text()= 'Polyester']")).click();
 
-    Assertions.assertEquals("Printed Chiffon Dress", expectedProductName, "Product is not found");
+    unExpectedProduct = getUnExpectedProduct();
+    expectedProduct = getExpectedProduct();
+
+    Assertions.assertTrue((expectedProduct).isDisplayed(), "Product is not found");
   }
 }

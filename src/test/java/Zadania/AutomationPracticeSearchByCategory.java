@@ -14,9 +14,7 @@ import java.time.Duration;
 
 public class AutomationPracticeSearchByCategory {
   WebDriver driver;
-  WebDriverWait wait;
   public WebElement expectedProduct;
-  public WebElement unExpectedProduct;
 
   @BeforeEach
   public void driverSetup (){
@@ -30,8 +28,6 @@ public class AutomationPracticeSearchByCategory {
     WebElement ele = driver.findElement(By.xpath(".//a[text()= 'Women']"));
     WebElement we =driver.findElement(By.xpath(".//*[text()= 'Women']/following-sibling::ul/li/following-sibling::li/ul/li[3]/a"));
     act.moveToElement(ele).moveToElement(we).click().build().perform();
-
-    wait = new WebDriverWait(driver, Duration.ofSeconds(10));
   }
 
   @AfterEach
@@ -44,13 +40,8 @@ public class AutomationPracticeSearchByCategory {
     return driver.findElement(By.cssSelector("[id= 'product_list'] h5 a[title = 'Printed Chiffon Dress']"));
   }
 
-  private WebElement getUnExpectedProduct() {
-    return driver.findElement(By.cssSelector("[id= 'product_list'] h5 a[title = 'Printed Summer Dress']"));
-  }
-
   @Test
   public void searchOnCategoryPage() {
-
     expectedProduct = getExpectedProduct();
     Assertions.assertTrue((expectedProduct).isDisplayed(), "Product is not found");
   }
@@ -62,9 +53,7 @@ public class AutomationPracticeSearchByCategory {
     driver.findElement(By.xpath(".//a[text()= 'Midi Dress']")).click();
     driver.findElement(By.xpath(".//a[text()= 'Polyester']")).click();
 
-    unExpectedProduct = getUnExpectedProduct();
     expectedProduct = getExpectedProduct();
-
     Assertions.assertTrue((expectedProduct).isDisplayed(), "Product is not found");
   }
 }

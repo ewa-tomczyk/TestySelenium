@@ -13,8 +13,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.util.List;
 
-import static java.lang.Thread.sleep;
-
 public class MetodyLokalizujace {
 
   WebDriver driver;

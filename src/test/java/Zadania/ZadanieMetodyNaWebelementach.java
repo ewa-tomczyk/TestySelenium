@@ -13,12 +13,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 
 public class ZadanieMetodyNaWebelementach {
   WebDriver driver;
-  WebElement elements;
 
   @BeforeEach
   public void driverSetup () throws InterruptedException {
@@ -34,43 +31,37 @@ public class ZadanieMetodyNaWebelementach {
     driver.quit();
   }
 
-
   @Test
   public void MetodyWebElementy() {
-    WebElement element = driver.findElement(By.cssSelector("[name= 'main-page']"));
-    boolean buttonStronaGłówna = element.isEnabled();
+    WebElement inactiveButton = driver.findElement(By.cssSelector("[name= 'main-page']"));
+    WebElement hiddenButton = driver.findElement(By.cssSelector("a[name='sailing']"));
+    List<WebElement> yellowButtons = driver.findElements(By.cssSelector(".button"));
+    WebElement selectedCheckbox = driver.findElement(By.cssSelector("input[name='selected-checkbox']"));
+    WebElement notSelectedCheckbox = driver.findElement(By.cssSelector("input[name='not-selected-checkbox']"));
+    List<WebElement> elementsWithButtonClass = driver.findElements(By.cssSelector(".button"));
 
-    assertEquals(false, buttonStronaGłówna, "Button isn't active");
-
-    WebElement element1 = driver.findElement(By.cssSelector("a[name='sailing']"));
-    boolean invisibleButton = element1.isDisplayed();
-
-    assertEquals(false, invisibleButton, "Button is visible");
-
-    WebElement element2 = driver.findElement(By.cssSelector("a[class='button']"));
-    String buttonColour = element2.getCssValue("background-color");
-
-    assertEquals("rgba(245, 233, 101, 1)", buttonColour, "Button isn't yellow");
-
-    WebElement element3 = driver.findElement(By.cssSelector("input[name='selected-checkbox']"));
-    boolean isCheckboxMarked = element3.isSelected();
-
-    assertEquals(true, isCheckboxMarked, "Checkbox isn't marked");
-
-    WebElement element4 = driver.findElement(By.cssSelector("input[name='not-selected-checkbox']"));
-    boolean isCheckboxNotMarked = element4.isSelected();
-
-    assertEquals(false, isCheckboxNotMarked, "Checkbox isn't marked");
-
-    List<WebElement> elementWithButtonClass = driver.findElements(By.cssSelector(".button"));
-    assertElementsHaveCorrectTag(elementWithButtonClass);
+    Assertions.assertAll("Checking assertions of elements",
+            () -> Assertions.assertFalse(inactiveButton.isEnabled(), "Button is not disabled"),
+            () -> Assertions.assertFalse(hiddenButton.isDisplayed(), "Button is visible"),
+            () -> checkIfButtonsAreYellow(yellowButtons),
+            () -> Assertions.assertTrue(selectedCheckbox.isSelected(), "Checkbox isn't marked"),
+            () -> Assertions.assertFalse(notSelectedCheckbox.isSelected(), "Checkbox isn't marked"),
+            () -> assertElementsHaveCorrectTag(elementsWithButtonClass)
+    );
 
   }
 
-  public void assertElementsHaveCorrectTag (List<WebElement> elements) {
-    for (WebElement element : elements) {
-      Assertions.assertEquals("a", element.getTagName());
+    public void checkIfButtonsAreYellow (List<WebElement> buttons) {
+      for (WebElement button : buttons) {
+        String color = button.getCssValue("background-color");
+        Assertions.assertEquals("rgba(245, 233, 101, 1)", color, "Wrong color");
+      }
     }
-  }
 
-}
+      public void assertElementsHaveCorrectTag (List<WebElement> elements) {
+        for (WebElement element : elements) {
+          Assertions.assertEquals("a", element.getTagName(), "Element tag is not a");
+        }
+      }
+
+  }

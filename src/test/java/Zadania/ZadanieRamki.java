@@ -36,37 +36,47 @@ public class ZadanieRamki {
     driver.quit();
   }
 
-  public void nawigateToMainFrame() {
-    WebElement ramka = driver.findElement(By.cssSelector("#main-frame"));
-    driver.switchTo().frame(ramka);
-  }
+  @Test
+  public void mainPageButtonDisabledTest() {
+    driver.switchTo().frame("main-frame");
+    WebElement mainPageButton = driver.findElement(By.cssSelector("input[name='main-page']"));
 
-
-  public void nawigateToStronaGłównaFrame() {
-    WebElement ramkaStronaGłówna = driver.findElement(By.cssSelector("iframe[src= 'https://fakestore.testelka.pl/ramka-button-do-strony-glownej/']"));
-    driver.switchTo().frame(ramkaStronaGłówna);
+    Assertions.assertFalse(mainPageButton.isEnabled(), "Buton is enabled");
   }
 
   @Test
-  public void zadanieRamki1() {
-    nawigateToMainFrame();
-    WebElement buttonStronaGlowna = driver.findElement(By.cssSelector("[name='main-page']"));
+  public void imageLinkTest() {
+    driver.switchTo().frame("main-frame")
+            .switchTo().frame("image");
 
-    Assertions.assertFalse(buttonStronaGlowna.isEnabled(), "Buton isn't enabled");
+    WebElement mainPageLink = driver.findElement(By.xpath(".//img[@alt='Wakacje']/.."));
+    Assertions.assertEquals("https://fakestore.testelka.pl/", mainPageLink.getAttribute("href"), "Link isn't correct");
   }
 
   @Test
-  public void zadanieRamki2() {
-    nawigateToMainFrame();
-    String image = driver.findElement(By.cssSelector("[id='post-292'] p a")).getCssValue("href");
-    Assertions.assertEquals("https://fakestore.testelka.pl/", image, "Link isn't correct");
+  public void mainPageButtonEnabledTest() {
+    driver.switchTo().frame("main-frame")
+            .switchTo().frame("image")
+            .switchTo().frame(0);
+    WebElement mainPageButton = driver.findElement(By.cssSelector("a.button"));
+    Assertions.assertTrue(mainPageButton.isEnabled(), "Buton isn't enabled");
   }
 
   @Test
-  public void zadanieRamki3() {
-    nawigateToStronaGłównaFrame();
-    WebElement buttonStronaGlowna2 = driver.findElement(By.cssSelector(".button"));
+  public void logoDisplayedTest() {
+    driver.switchTo().frame("main-frame")
+            .switchTo().frame("image")
+            .switchTo().frame(0);
+    WebElement mainPageButton = driver.findElement(By.cssSelector("a.button"));
+    mainPageButton.click();
+    driver.switchTo().parentFrame()
+            .switchTo().parentFrame();
 
-    Assertions.assertFalse(buttonStronaGlowna2.isEnabled(), "Buton isn't enabled");
+    WebElement climbingButton = driver.findElement(By.cssSelector("a[name='climbing']"));
+    climbingButton.click();
+
+    WebElement logo = driver.findElement(By.cssSelector("img.custom-logo"));
+    Assertions.assertTrue(logo.isDisplayed(), "Logo isn't displayed");
+
   }
-}
+  }

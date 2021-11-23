@@ -12,7 +12,6 @@ import java.time.Duration;
 
 public class ZadanieAlerty {
   WebDriver driver;
-  JavascriptExecutor js;
 
   @BeforeEach
   public void driverSetup (){

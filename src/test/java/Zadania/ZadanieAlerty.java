@@ -22,7 +22,7 @@ public class ZadanieAlerty {
     driver.manage().window().setPosition(new Point(5, 30));
     driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
     driver.navigate().to("https://jsfiddle.net/nm134se7/");
-    js = (JavascriptExecutor) driver;
+    driver.switchTo().frame("result");
   }
 
   @AfterEach
@@ -31,13 +31,8 @@ public class ZadanieAlerty {
   }
 
   @Test
-  public void zadanieAlerty() {
-    driver.switchTo().frame("result");
-    driver.findElement(By.cssSelector("[onclick='confirmFunction()']"));
-    String javascript = "prompt ('Wciśnij coś:')";
-
-    JavascriptExecutor js = (JavascriptExecutor) driver;
-    js.executeScript(javascript);
+  public void zadanieAlertyAccept() {
+    driver.findElement(By.cssSelector("[onclick='confirmFunction()']")).click();
     driver.switchTo().alert().accept();
     String text = driver.findElement(By.cssSelector("[id='demo']")).getText();
     Assertions.assertEquals("Wybrana opcja to OK!", text, "Incorrect message");
@@ -45,16 +40,28 @@ public class ZadanieAlerty {
 
   @Test
   public void zadanieAlertyDissmiss() {
-    driver.switchTo().frame("result");
-    driver.findElement(By.cssSelector("[onclick='confirmFunction()']"));
-    String javascript = "prompt ('Wciśnij coś:')";
-
-    JavascriptExecutor js = (JavascriptExecutor) driver;
-    js.executeScript(javascript);
+    driver.findElement(By.cssSelector("[onclick='confirmFunction()']")).click();
     driver.switchTo().alert().dismiss();
     String text = driver.findElement(By.cssSelector("[id='demo']")).getText();
     Assertions.assertEquals("Wybrana opcja to Cancel!", text, "Incorrect message");
   }
 
+  @Test
+  public void zadaniePromptAccept() {
+    driver.findElement(By.cssSelector("[onclick='promptFunction()']")).click();
+    String keys = "Sth";
+    driver.switchTo().alert().sendKeys(keys);
+    driver.switchTo().alert().accept();
+    String text = driver.findElement(By.cssSelector("[id='prompt-demo']")).getText();
+    Assertions.assertEquals("Cześć " + keys + "! Jak leci?", text, "Incorrect message");
+  }
+
+  @Test
+  public void zadaniePromptDismiss() {
+    driver.findElement(By.cssSelector("[onclick='promptFunction()']")).click();
+    driver.switchTo().alert().dismiss();
+    String text = driver.findElement(By.cssSelector("[id='prompt-demo']")).getText();
+    Assertions.assertEquals("Użytkownik anulował akcję.", text, "Incorrect message");
+  }
 
 }

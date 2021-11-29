@@ -9,7 +9,6 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 
-import java.security.Key;
 import java.time.Duration;
 import java.util.List;
 
@@ -66,8 +65,8 @@ public class ZadanieAkcje {
     WebElement textField = driver.findElement(By.cssSelector("#input"));
     ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", textField);
 
-    actions.click(textField).sendKeys(text).sendKeys(Keys.TAB).click().build().perform();
-
+    WebElement button = driver.findElement(By.cssSelector("[onclick='zatwierdzTekst()']"));
+    actions.sendKeys(textField, text).click(button).build().perform();
     String message = driver.findElement(By.cssSelector("#output")).getText();
 
     Assertions.assertEquals("Wprowadzony tekst: " + text , message, "Wrong text");
@@ -82,16 +81,11 @@ public class ZadanieAkcje {
 
     actions.keyDown(Keys.COMMAND).click(itemy.get(0)).click(itemy.get(4)).click(itemy.get(6)).keyUp(Keys.COMMAND).build().perform();
 
-    String color1 = driver.findElement(By.cssSelector("ol#selectable li[name ='1']")).getCssValue("background-color");
-    String color2 = driver.findElement(By.cssSelector("ol#selectable li[name ='5']")).getCssValue("background-color");
-    String color3 = driver.findElement(By.cssSelector("ol#selectable li[name ='7']")).getCssValue("background-color");
-
-
-    Assertions.assertEquals("rgba(243, 152, 20, 1)", color1, "Elements aren't marked");
-    Assertions.assertEquals("rgba(243, 152, 20, 1)", color2, "Elements aren't marked");
-    Assertions.assertEquals("rgba(243, 152, 20, 1)", color3, "Elements aren't marked");
-
-
+    Assertions.assertAll(
+            ()->Assertions.assertTrue(itemy.get(0).getAttribute("class").contains("ui-selected"), "Item wasn't selected"),
+            ()->Assertions.assertTrue(itemy.get(4).getAttribute("class").contains("ui-selected"), "Item wasn't selected"),
+            ()->Assertions.assertTrue(itemy.get(6).getAttribute("class").contains("ui-selected"), "Item wasn't selected")
+            );
   }
 
 }

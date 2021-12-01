@@ -45,6 +45,23 @@ public class Storage {
     local.setItem("spell", "Allles");
     local.clear();
   }
+
+  @Test
+  public void localJSStorge() {
+    driver.navigate().to("https://airly.org/map/pl/#50.0645188245,19.9494942593");
+
+    String key = "persist:map";
+
+
+    String value = (String) ((JavascriptExecutor) driver).executeScript("return localStorage.getItem(arguments[0]);", key);
+    ((JavascriptExecutor) driver).executeScript("localStorage.setItem(arguments[0], arguments[1]);", "spell", "buambo");
+    ((JavascriptExecutor) driver).executeScript("localStorage.removeItem(arguments[0]);", key);
+    String indexValue = (String) ((JavascriptExecutor) driver).executeScript("return localStorage.key(arguments[0]);", 2);
+    long size = (long) ((JavascriptExecutor) driver).executeScript("return localStorage.length;");
+    ((JavascriptExecutor) driver).executeScript("localStorage.clear();");
+  }
+
+
   @Test
   public void sessionStorge() {
     driver.navigate().to("https://www.youtube.com/watch?v=aIN0lcqXCJo");

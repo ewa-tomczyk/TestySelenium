@@ -60,13 +60,15 @@ public class ZadanieSesja {
 
   @Test
   public void removeStorage() {
-    driver.findElement(By.cssSelector("[name='add-to-cart']")).click();
-    SessionStorage session = driver.getSessionStorage();
-    String value = session.getItem("wc_cart_created");
-    String removedValue = session.removeItem("wc_cart_created");
-
-  }
-
-
+    Set<String> keys = driver.getSessionStorage().keySet();
+    String wcFragmentsKey = "";
+    for (String key : keys) {
+      if (key.contains("wc_fragments")) {
+        wcFragmentsKey = key;
+      }
+    }
+      String removed = driver.getSessionStorage().removeItem(wcFragmentsKey);
+      Assertions.assertTrue(removed!=null, "Not removed");
+    }
 
 }

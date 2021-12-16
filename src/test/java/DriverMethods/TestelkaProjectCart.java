@@ -129,6 +129,41 @@ public class TestelkaProjectCart {
     Assertions.assertEquals(10, cartAmount, "Amount isn't 10");
   }
 
+  @Test
+  public void changingCartAmountOnBasketPage() {
+    driver.navigate().to("https://fakestore.testelka.pl/product/fuerteventura-sotavento/");
+    driver.findElement(By.cssSelector(".woocommerce-store-notice__dismiss-link")).click();
+    driver.findElement(By.cssSelector("[name='add-to-cart']")).click();
+
+    driver.findElement(By.cssSelector(".cart-contents")).click();
+    driver.findElement(By.cssSelector(".quantity input")).clear();
+    driver.findElement(By.cssSelector(".quantity input")).sendKeys("3");
+    driver.findElement(By.cssSelector("[name='update_cart']")).click();
+
+    String cartAmount = driver.findElement(By.cssSelector(".quantity input")).getAttribute("value");
+
+    Assertions.assertEquals("3", cartAmount, "Amount isn't 3");
+  }
+
+  @Test
+  public void removingProductFromTheCart() {
+    driver.navigate().to("https://fakestore.testelka.pl/product/fuerteventura-sotavento/");
+    driver.findElement(By.cssSelector(".woocommerce-store-notice__dismiss-link")).click();
+    driver.findElement(By.cssSelector("[name='add-to-cart']")).click();
+
+    driver.findElement(By.cssSelector(".cart-contents")).click();
+
+    driver.findElement(By.cssSelector(".remove")).click();
+    wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("[class='woocommerce-cart-form processing']")));
+
+    WebElement cartMessage = driver.findElement(By.cssSelector(".woocommerce-message"));
+
+     String textCartMessage = cartMessage.getText();
+
+    Assertions.assertEquals("Usunięto: „Fuerteventura - Sotavento“. Cofnij?", textCartMessage, "Product wasn't removed");
+  }
+
+
   }
 
 
